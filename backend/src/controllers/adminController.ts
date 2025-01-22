@@ -87,4 +87,19 @@ export const createTeacher = async (
       next(error);
     }
   };
+
+  // Get all students (for a teacher to view)
+  export const getAllTeachers = async (req: Request, res: Response) => {
+    try {
+      const teachers = await User.find({ role: "Teacher" });
+      res.status(200).json(teachers);
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message: "Failed to fetch students",
+          error: error,
+        });
+    }
+  };
   
