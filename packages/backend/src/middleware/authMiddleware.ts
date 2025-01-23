@@ -6,7 +6,9 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    return res.status(401).json({ message: "Access denied, no token provided" });
+    return res
+      .status(401)
+      .json({ message: "Access denied, no token provided" });
   }
 
   try {

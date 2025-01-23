@@ -17,7 +17,7 @@ export const getAvailableQuizzes = async (req: Request, res: Response) => {
 export const attemptQuiz = async (req: Request, res: Response) => {
   try {
     const { quizId } = req.params;
-    const { answers } = req.body; // answers should be an object like { questionId: answer }
+    const { answers, userId } = req.body; // answers should be an object like { questionId: answer }
 
     // Find the quiz
     const quiz = await Quiz.findById(quizId);
@@ -25,22 +25,63 @@ export const attemptQuiz = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Quiz not found" });
     }
 
-    // Validate that the student has not already attempted the quiz
-    // You can store the student's attempts in a separate collection if needed
+    // Check if student has already attempted this quiz
+    const student = await User.findById(userId);
+    if (
+      quiz.attempts.some(
+        (attempt) => attempt.student.toString() === userId.toString()
+      )
+    ) {
+      return res
+        .status(400)
+        .json({ message: "You have already attempted this quiz" });
+    }
 
     // Check answers and calculate score
     let score = 0;
     quiz.questions.forEach((question, index) => {
       if (question.type === "radio" && answers[index] === question.answer) {
         score++;
-      } else if (question.type === "ms" && JSON.stringify(answers[index]) === JSON.stringify(question.answer)) {
+      } else if (
+        question.type === "ms" &&
+        JSON.stringify(answers[index]) === JSON.stringify(question.answer)
+      ) {
         score++;
       }
     });
 
+    // Record the student's attempt
+    quiz.attempts.push({ student: userId, score, answers });
+    await quiz.save();
+
     res.status(200).json({ message: "Quiz attempted successfully", score });
   } catch (error) {
     res.status(500).json({ message: "Failed to attempt quiz", error: error });
+  }
+};
+
+// Get student's results for a quiz (after due date)
+export const getStudentResults = async (req: Request, res: Response) => {
+  const { quizId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const quiz = await Quiz.findById(quizId).populate("attempts.student");
+    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+
+    const studentAttempt = quiz.attempts.find(
+      (attempt) => attempt.student.toString() === userId.toString()
+    );
+
+    if (!studentAttempt) {
+      return res
+        .status(404)
+        .json({ message: "You have not attempted this quiz" });
+    }
+
+    res.status(200).json(studentAttempt);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching results", error: error });
   }
 };
 
@@ -61,6 +102,8 @@ export const changePassword = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "Password changed successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Failed to change password", error: error });
+    res
+      .status(500)
+      .json({ message: "Failed to change password", error: error });
   }
 };

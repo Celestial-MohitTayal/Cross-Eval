@@ -6,8 +6,13 @@ export interface IQuiz extends Document {
   questions: {
     question: string;
     options: string[];
-    type: "radio" | "ms"; // Single choice or Multiple choice
+    type: "radio" | "ms"; // Single choice or Multiple Select
     answer: string[] | string; // For multiple choices, answer is an array
+  }[];
+  attempts: {
+    student: string;
+    answers: string[] | string;
+    score: number;
   }[];
   dueDate: Date;
 }
@@ -22,6 +27,13 @@ const QuizSchema: Schema = new Schema(
         options: [{ type: String, required: true }],
         type: { type: String, enum: ["radio", "ms"], required: true },
         answer: { type: Schema.Types.Mixed, required: true },
+      },
+    ],
+    attempts: [
+      {
+        student: { type: String, required: true },
+        answers: { type: Schema.Types.Mixed, required: true },
+        score: { type: Number, required: true },
       },
     ],
     dueDate: { type: Date, required: true },
