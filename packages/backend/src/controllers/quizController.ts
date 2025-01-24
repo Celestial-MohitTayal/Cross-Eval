@@ -24,12 +24,10 @@ export const createQuiz = async (req: Request, res: Response) => {
 
     res.status(201).json({ message: "Quiz created successfully", quiz });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to create quiz",
-        error: "Error creating quiz...",
-      });
+    res.status(500).json({
+      message: "Failed to create quiz",
+      error: "Error creating quiz...",
+    });
   }
 };
 
@@ -39,11 +37,9 @@ export const getQuizzes = async (req: Request, res: Response) => {
     const quizzes = await Quiz.find();
     res.status(200).json(quizzes);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch quizzes",
-        error: "Error fetching quiz...",
-      });
+    res.status(500).json({
+      message: "Failed to fetch quizzes",
+      error: error,
+    });
   }
 };

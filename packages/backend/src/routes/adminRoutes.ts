@@ -1,6 +1,11 @@
 import express from "express";
 import { RequestHandler } from "express";
-import { createTeacher, deleteUser, toggleUserAccess, getAllTeachers } from "../controllers/adminController";
+import {
+  createTeacher,
+  deleteUser,
+  toggleUserAccess,
+  getAllTeachers,
+} from "../controllers/adminController";
 
 const router = express.Router();
 

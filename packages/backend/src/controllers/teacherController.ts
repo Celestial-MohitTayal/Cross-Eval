@@ -39,12 +39,10 @@ export const onboardStudent = async (req: Request, res: Response) => {
       .status(201)
       .json({ message: "Student onboarded successfully", student });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to onboard student",
-        error: error,
-      });
+    res.status(500).json({
+      message: "Failed to onboard student",
+      error: error,
+    });
   }
 };
 
@@ -54,11 +52,9 @@ export const getAllStudents = async (req: Request, res: Response) => {
     const students = await User.find({ role: "Student" });
     res.status(200).json(students);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch students",
-        error: error,
-      });
+    res.status(500).json({
+      message: "Failed to fetch students",
+      error: error,
+    });
   }
 };
