@@ -25,5 +25,8 @@
   "homepage": "https://github.com/Celestial-MohitTayal/Cross-Eval#readme",
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
   }
 }
