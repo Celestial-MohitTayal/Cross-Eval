@@ -9,7 +9,7 @@ import {
 const router = express.Router();
 
 // Teacher-specific routes for onboarding students
-router.post("/onboard", protect as RequestHandler, onboardStudent); // Onboard a student
-router.get("/all", protect as RequestHandler, getAllStudents); // Get all students
+router.post("/onboard-student", protect as RequestHandler, onboardStudent); // Onboard a student
+router.get("/get-all-student", protect as RequestHandler, getAllStudents); // Get all students
 
 export default router;
