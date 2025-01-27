@@ -7,8 +7,6 @@ export const onboardStudent = async (req: Request, res: Response) => {
   try {
     const { name, email, gender, dob } = req.body;
 
-    console.log("Request Body:", req.body);
-
     const dobDate = new Date(dob);
 
     // Generate a default password based on the first four letters of the name + birth year
@@ -21,7 +19,7 @@ export const onboardStudent = async (req: Request, res: Response) => {
     });
     const userId = lastStudent
       ? `S${parseInt(lastStudent.userId.slice(1)) + 1}`
-      : "S001";
+      : "S1";
 
     const student: IUser = new User({
       name,
