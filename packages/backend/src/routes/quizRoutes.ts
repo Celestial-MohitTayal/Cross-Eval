@@ -6,7 +6,7 @@ import { createQuiz, getQuizzes } from "../controllers/quizController";
 const router = express.Router();
 
 // Teacher-specific routes for managing quizzes
-router.post("/create", protect as RequestHandler, createQuiz as RequestHandler); // Create a quiz
-router.get("/all", protect as RequestHandler, getQuizzes); // Get all quizzes
+router.post("/create-quiz", protect as RequestHandler, createQuiz as RequestHandler); // Create a quiz
+router.get("/get-all-quiz", protect as RequestHandler, getQuizzes); // Get all quizzes
 
 export default router;
