@@ -14,7 +14,7 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
- 
+
   // Handle login form submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -22,7 +22,7 @@ const LoginPage: React.FC = () => {
     setError(""); // Clear any previous errors
 
     try {
-      const response = await axios.post(apiUrl+"/login", {
+      const response = await axios.post(apiUrl + "/login", {
         email,
         password,
       });
@@ -33,19 +33,42 @@ const LoginPage: React.FC = () => {
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
       // Authentication logic - use switch case, constants
-    if (user.role === "Admin") {
-      dispatch(login({ id: user.userId, name: user.name, email, type: user.role, isLoggedIn: true }));
-      navigate("/admin");
-    } else if (user.role === "Teacher") {
-      dispatch(login({ id: user.userId, name: user.name, email, type: user.role, isLoggedIn: true }));
-      navigate("/teacher");
-    } else if (user.role === "Student") {
-      dispatch(login({ id: user.userId, name: user.name, email, type: user.role, isLoggedIn: true }));
-      navigate("/student");
-    } else {
-      alert("Invalid credentials");
-    }
-
+      if (user.role === "Admin") {
+        dispatch(
+          login({
+            id: user.userId,
+            name: user.name,
+            email,
+            type: user.role,
+            isLoggedIn: true,
+          })
+        );
+        navigate("/admin");
+      } else if (user.role === "Teacher") {
+        dispatch(
+          login({
+            id: user.userId,
+            name: user.name,
+            email,
+            type: user.role,
+            isLoggedIn: true,
+          })
+        );
+        navigate("/teacher");
+      } else if (user.role === "Student") {
+        dispatch(
+          login({
+            id: user.userId,
+            name: user.name,
+            email,
+            type: user.role,
+            isLoggedIn: true,
+          })
+        );
+        navigate("/student");
+      } else {
+        alert("Invalid credentials");
+      }
     } catch (err: any) {
       // Handle errors (e.g., invalid credentials or server error)
       if (err.response && err.response.data && err.response.data.message) {
@@ -59,8 +82,16 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
-      <Paper elevation={3} style={{ padding: 20, maxWidth: 400, width: "100%" }}>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      style={{ height: "100vh" }}
+    >
+      <Paper
+        elevation={3}
+        style={{ padding: 20, maxWidth: 400, width: "100%" }}
+      >
         <Typography variant="h5" gutterBottom align="center">
           Login
         </Typography>
@@ -84,6 +115,11 @@ const LoginPage: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </Box>
+          {error && (
+            <Typography variant="body2" sx={{ color: "red", marginBottom: 2 }}>
+              {error}
+            </Typography>
+          )}
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Login
           </Button>
