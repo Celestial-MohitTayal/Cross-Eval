@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import User, { IUser } from "../models/User";
-import { hash } from "crypto";
+import mongoose from "mongoose";
 
 // Create a teacher
 export const createTeacher = async (
@@ -10,23 +10,28 @@ export const createTeacher = async (
   next: NextFunction
 ): Promise<Response | void> => {
   try {
-    const { name, email, password, gender, dob } = req.body;
+    const { name, email, gender, dob } = req.body;
 
     console.log("Request Body:", req.body);
 
-    if (!name || !email || !password || !gender || !dob) {
+    if (!name || !email || !gender || !dob) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const dobDate = new Date(dob);
+
+    // Generate a default password based on the first four letters of the name + birth year
+    const password = name.slice(0, 4).toLowerCase() + dobDate.getFullYear();
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Generate unique ID
-    const lastTeacher = await User.findOne({ type: "Teacher" }).sort({
+    const lastTeacher = await User.findOne({ role: "Teacher" }).sort({
       userId: -1,
     });
+
     const userId = lastTeacher
       ? `T${parseInt(lastTeacher.userId.slice(1)) + 1}`
-      : "T001";
-
-    const hashedPassword = await bcrypt.hash(password, 10);
+      : "T1";
 
     const teacher: IUser = new User({
       name,
@@ -76,6 +81,11 @@ export const toggleUserAccess = async (
   try {
     const { id } = req.params;
 
+    // Validate ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
     const user = await User.findById(id);
 
     if (!user) {
@@ -85,8 +95,17 @@ export const toggleUserAccess = async (
     user.isActive = !user.isActive;
     await user.save();
 
-    res.status(200).json({ message: "User access updated successfully", user });
+    res.status(200).json({
+      success: true,
+      message: "User access updated successfully",
+      data: user,
+    });
   } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while toggling user access",
+      error: error,
+    });
     next(error);
   }
 };

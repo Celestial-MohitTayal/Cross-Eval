@@ -14,7 +14,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <AppBar position="static" color="primary">
+    <AppBar position="absolute" color="primary">
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
           School Management System

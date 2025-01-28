@@ -22,7 +22,7 @@ const UserSchema: Schema = new Schema(
       enum: ["Admin", "Teacher", "Student"],
     },
     dob: { type: Date, required: true },
-    isActive: { type: String, default: true },
+    isActive: { type: Boolean, default: true },
     userId: { type: String, required: true, unique: true },
   },
   {

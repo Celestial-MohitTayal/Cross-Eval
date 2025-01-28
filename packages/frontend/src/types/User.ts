@@ -1,10 +1,10 @@
 export interface User {
-    id: string;
+    _id: string;
     name: string;
     email: string;
-    password?: string; // Optional for responses
-    gender: "male" | "female";
-    type: "Admin" | "Teacher" | "Student";
+    gender: string;
+    role: "Admin" | "Teacher" | "Student";
+    isActive: boolean;
     dob: string; // Format: YYYY-MM-DD
   }
   
