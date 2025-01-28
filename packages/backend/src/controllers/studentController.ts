@@ -13,6 +13,19 @@ export const getAvailableQuizzes = async (req: Request, res: Response) => {
   }
 };
 
+//Get Completed Quizzes
+export const getCompletedQuizzes = async (req: Request, res: Response) => {
+  try {
+    const completedQuizzes = await Quiz.find({ dueDate: { $lt: new Date() } });
+    res.status(200).json(completedQuizzes);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch completed quizzes",
+      error: error,
+    });
+  }
+};
+
 // Attempt a quiz
 export const attemptQuiz = async (req: Request, res: Response) => {
   try {

@@ -19,7 +19,7 @@ export const createQuiz = async (req: Request, res: Response) => {
       questions,
       dueDate,
     });
-
+    
     await quiz.save();
 
     res.status(201).json({ message: "Quiz created successfully", quiz });
