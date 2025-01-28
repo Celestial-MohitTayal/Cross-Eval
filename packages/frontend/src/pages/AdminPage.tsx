@@ -1,4 +1,3 @@
-// pages/AdminPage.tsx
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Box, Grid, TextField, Button } from "@mui/material";
 import Header from "../components/Header";

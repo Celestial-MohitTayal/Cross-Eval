@@ -43,7 +43,7 @@ const Header: React.FC = () => {
     <AppBar position="absolute" color="primary">
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
-          School Management System
+          {(user.role).toUpperCase()} DASHBOARD
         </Typography>
         <Button color="inherit" onClick={handleLogout}>
           Logout
