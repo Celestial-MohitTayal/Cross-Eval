@@ -22,6 +22,7 @@ const UserForm: React.FC<UserFormProps> = ({ onSubmit, initialData = { name: "",
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
+    setFormData({ name: "", email: "", gender: "", dob: "" });
   };
 
   return (

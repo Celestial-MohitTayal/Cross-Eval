@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../redux/userSlice";
+import { logout } from "../redux/authSlice";
 
 const Header: React.FC = () => {
   const dispatch = useDispatch();
@@ -26,11 +26,13 @@ const Header: React.FC = () => {
           navigate("/student");
           break;
         default:
-          alert("Invalid credentials");
+          navigate("/");
           break;
       }
+    } else {
+      navigate("/");
     }
-  }, []);
+  }, [token, user, navigate]);
 
   const handleLogout = () => {
     dispatch(logout());

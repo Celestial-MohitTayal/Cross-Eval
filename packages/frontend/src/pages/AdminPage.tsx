@@ -60,7 +60,8 @@ const AdminPage: React.FC = () => {
       alert(response.message);
       fetchTeachers();
     } catch (err: any) {
-      setError(err?.message || "Error fetching teachers");
+      setError(err?.message || "Error creating teacher");
+      setTimeout(() => setError(null), 5000);
     }
   };
 

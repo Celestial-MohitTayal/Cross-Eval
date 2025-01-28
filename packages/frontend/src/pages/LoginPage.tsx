@@ -25,11 +25,11 @@ const LoginPage: React.FC = () => {
       });
 
       let user = response.data.user;
-      // On success, save the JWT token to localStorage or sessionStorage
+      // On success, save the JWT token to localStorage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
-      // Authentication logic - use switch case, constants
+      // Authentication logic
       switch (user?.role) {
         case "Admin":
           navigate("/admin");
@@ -48,8 +48,10 @@ const LoginPage: React.FC = () => {
       // Handle errors (e.g., invalid credentials or server error)
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
+        setTimeout(() => setError(""), 5000);
       } else {
         setError("An unexpected error occurred.");
+        setTimeout(() => setError(""), 5000);
       }
     } finally {
       setLoading(false);
