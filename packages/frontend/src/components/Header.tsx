@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,30 @@ import { logout } from "../redux/userSlice";
 const Header: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const user = useMemo(() => {
+    const userFromStorage = localStorage.getItem("user");
+    return userFromStorage ? JSON.parse(userFromStorage) : null;
+  }, []);
+
+  useEffect(() => {
+    if (token && user) {
+      switch (user?.role) {
+        case "Admin":
+          navigate("/admin");
+          break;
+        case "Teacher":
+          navigate("/teacher");
+          break;
+        case "Student":
+          navigate("/student");
+          break;
+        default:
+          alert("Invalid credentials");
+          break;
+      }
+    }
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());

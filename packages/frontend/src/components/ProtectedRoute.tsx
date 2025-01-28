@@ -8,14 +8,14 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
-  const user: any = useSelector((state: RootState) => state.user);
+  const auth: any = useSelector((state: RootState) => state.auth);
 
-  if (!user.isLoggedIn) {
+  if (!auth.user.isLoggedIn) {
     // Redirect to login if user is not logged in
     return <Navigate to="/" />;
   }
 
-  if (!allowedRoles.includes(user.type)) {
+  if (!allowedRoles.includes(auth.user.role)) {
     // Redirect to login if user doesn't have the correct role
     return <Navigate to="/" />;
   }
