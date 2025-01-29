@@ -59,6 +59,7 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
 
     if (selectedDate < currentDate) {
       setError("Due date cannot be in the past");
+      setTimeout(() => setError(null), 5000);
       return;
     }
     try {
