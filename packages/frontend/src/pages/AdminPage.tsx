@@ -1,42 +1,18 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import {
-  Grid,
-  TextField,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Button,
-  Tabs,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  SelectChangeEvent,
-  Box,
-} from "@mui/material";
-import { Lock, LockOpen, Delete } from "@mui/icons-material";
+import { Tabs, Tab, Box, Grid, TextField, Button } from "@mui/material";
 import Header from "../components/Header";
+import UserForm from "../components/userForm";
+import UserTable from "../components/userTable";
+import { get, post, patch, del } from "../utils/httpHelper";
 
 const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0); // 0 for Teachers, 1 for Students
   const [teachers, setTeachers] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [teacherData, setTeacherData] = useState({
-    name: "",
-    email: "",
-    gender: "",
-    dob: "",
-  });
 
   const apiUrl = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("token");
 
   // Fetch teachers when the component mounts
   useEffect(() => {
@@ -51,122 +27,64 @@ const AdminPage: React.FC = () => {
   }, [activeTab]);
 
   const fetchTeachers = async () => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`${apiUrl}/admin/get-all-teachers`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-        },
-      });
-      setTeachers(response.data);
+      const data = await get(`${apiUrl}/admin/get-all-teachers`, token!);
+      setTeachers(data);
     } catch (err) {
       setError("Error fetching teachers");
     }
   };
 
   const fetchStudents = async () => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`${apiUrl}/teacher/get-all-student`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-        },
-      });
-      setStudents(response.data);
+      const data = await get(`${apiUrl}/teacher/get-all-student`, token!);
+      setStudents(data);
     } catch (err) {
       setError("Error fetching students");
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setTeacherData({
-      ...teacherData,
-      [name]: value,
-    });
-  };
-
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const { name, value } = e.target;
-    setTeacherData({
-      ...teacherData,
-      [name]: value,
-    });
+  const handleCreateTeacher = async (data: {
+    name: string;
+    email: string;
+    gender: string;
+    dob: string;
+  }) => {
+    try {
+      const response = await post(
+        `${apiUrl}/admin/create-teacher`,
+        data,
+        token!
+      );
+      alert(response.message);
+      fetchTeachers();
+    } catch (err: any) {
+      setError(err?.message || "Error creating teacher");
+      setTimeout(() => setError(null), 5000);
+    }
   };
 
   const handleToggleAccess = async (id: string, role: string) => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await axios.patch(
-        `${apiUrl}/admin/users/${id}/toggle-access`, {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-          },
-        }
+      const response = await patch(
+        `${apiUrl}/admin/users/${id}/toggle-access`,
+        {},
+        token!
       );
-      alert(response.data.message);
-
-      // Refresh the respective list based on the role
-      if (role === "Teacher") {
-        fetchTeachers();
-      } else if (role === "Student") {
-        fetchStudents();
-      }
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Error updating access");
+      alert(response.message);
+      role === "Teacher" ? fetchTeachers() : fetchStudents();
+    } catch (err) {
+      alert("Error toggling access");
     }
   };
 
   const handleDeleteUser = async (id: string, role: string) => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await axios.delete(
-        `${apiUrl}/admin/delete-users/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-          },
-        }
-      );
-      alert(response.data.message);
-
-      // Refresh the respective list based on the role
-      if (role === "Teacher") {
-        fetchTeachers();
-      } else if (role === "Student") {
-        fetchStudents();
-      }
-    } catch (err: any) {
-      alert(err.response?.data?.message || "Error deleting user");
-    }
-  };
-
-  const handleCreateTeacher = async (e: React.FormEvent) => {
-    const token = localStorage.getItem("token");
-    e.preventDefault();
-    setError(null);
-
-    try {
-      const response = await axios.post(
-        apiUrl + "/admin/create-teacher",
-        teacherData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Add the token to the Authorization header
-          },
-        }
-      );
-      alert(response.data.message); // Show success message
-      fetchTeachers(); // Refresh the teacher list
-      setTeacherData({
-        name: "",
-        email: "",
-        gender: "",
-        dob: "",
-      });
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Error creating teacher");
+      const response = await del(`${apiUrl}/admin/delete-users/${id}`, token!);
+      alert(response.message);
+      role === "Teacher" ? fetchTeachers() : fetchStudents();
+    } catch (err) {
+      alert("Error deleting user");
     }
   };
 
@@ -176,171 +94,46 @@ const AdminPage: React.FC = () => {
       <Tabs
         value={activeTab}
         onChange={(e, newValue) => setActiveTab(newValue)}
+        aria-label="User Management Tabs"
       >
         <Tab label="Teachers" />
         <Tab label="Students" />
       </Tabs>
 
-      {activeTab === 0 && (
-        <div>
-          <h2>Create Teacher</h2>
-          {error && (
-            <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
-          )}
-          <form onSubmit={handleCreateTeacher}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  label="Name"
-                  name="name"
-                  fullWidth
-                  value={teacherData.name}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Email"
-                  name="email"
-                  fullWidth
-                  value={teacherData.email}
-                  onChange={handleChange}
-                  type="email"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel>Gender</InputLabel>
-                  <Select
-                    name="gender"
-                    value={teacherData.gender}
-                    onChange={handleSelectChange}
-                    label="Gender"
-                  >
-                    <MenuItem value="Male">Male</MenuItem>
-                    <MenuItem value="Female">Female</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Date of Birth"
-                  name="dob"
-                  fullWidth
-                  type="date"
-                  value={teacherData.dob}
-                  onChange={handleChange}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Create Teacher
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
-          <Box marginTop={10}>
-            <h2>Teachers List : {teachers.length}</h2>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Gender</TableCell>
-                    <TableCell>DOB</TableCell>
-                    <TableCell>Access</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {teachers.map((teacher) => (
-                    <TableRow key={teacher._id}>
-                      <TableCell>{teacher.name}</TableCell>
-                      <TableCell>{teacher.email}</TableCell>
-                      <TableCell>{teacher.gender}</TableCell>
-                      <TableCell>{teacher.dob.slice(0, 10)}</TableCell>
-                      <TableCell>
-                        {teacher.isActive ? "Active" : "Inactive"}
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          onClick={() =>
-                            handleToggleAccess(teacher._id, "Teacher")
-                          }
-                        >
-                          {teacher.isActive ? <LockOpen /> : <Lock />}
-                        </IconButton>
-                        <IconButton
-                          onClick={() =>
-                            handleDeleteUser(teacher._id, "Teacher")
-                          }
-                        >
-                          <Delete />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
-        </div>
-      )}
-
-      {activeTab === 1 && (
-        <div>
-          <h2>Students List: {students.length}</h2>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Gender</TableCell>
-                  <TableCell>DOB</TableCell>
-                  <TableCell>Access</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {students.map((student) => (
-                  <TableRow key={student._id}>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell>{student.email}</TableCell>
-                    <TableCell>{student.gender}</TableCell>
-                    <TableCell>{student.dob}</TableCell>
-                    <TableCell>
-                      {student.isActive ? "Active" : "Inactive"}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() =>
-                          handleToggleAccess(student._id, "Student")
-                        }
-                      >
-                        {student.isActive ? <LockOpen /> : <Lock />}
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleDeleteUser(student._id, "Student")}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-      )}
+      <Box>
+        {activeTab === 0 ? (
+          <>
+            <Box margin={4}>
+              <h2>Create Teacher</h2>
+              {error && (
+                <div style={{ color: "red", marginBottom: "10px" }}>
+                  {error}
+                </div>
+              )}
+              <UserForm onSubmit={handleCreateTeacher} />
+            </Box>
+            <Box margin={4}>
+              <h2>Teachers List : {teachers.length}</h2>
+              <UserTable
+                users={teachers}
+                onToggleAccess={handleToggleAccess}
+                onDelete={handleDeleteUser}
+              />
+            </Box>
+          </>
+        ) : (
+          <>
+            <Box margin={4}>
+            <h2>Students List: {students.length}</h2>
+              <UserTable
+                users={students}
+                onToggleAccess={handleToggleAccess}
+                onDelete={handleDeleteUser}
+              />
+            </Box>
+          </>
+        )}
+      </Box>
     </div>
   );
 };

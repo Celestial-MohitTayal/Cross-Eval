@@ -19,6 +19,10 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    if (!user.isActive) {
+      return res.status(400).json({ message: "User is not active, Please contact admin." });
+    }
+
     // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, type: user.role },

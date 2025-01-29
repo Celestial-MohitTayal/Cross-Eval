@@ -1,4 +1,5 @@
 import User, { IUser } from "../models/User";
+import Quiz from "../models/Quiz";
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
@@ -54,5 +55,23 @@ export const getAllStudents = async (req: Request, res: Response) => {
       message: "Failed to fetch students",
       error: error,
     });
+  }
+};
+
+//Get Student Results
+export const getResults = async (req: Request, res: Response): Promise<void> => {
+  const { quizId } = req.params;
+  console.log(quizId);
+  try {
+    const quiz = await Quiz.findById(quizId)
+    
+    if (!quiz) {
+       res.status(404).json({ message: "Quiz not found" });
+    }
+
+    res.status(200).json(quiz?.attempts); 
+  } catch (error) {
+    console.error("Error fetching results", error);
+    res.status(500).json({ message: "Error fetching results", error: error });
   }
 };

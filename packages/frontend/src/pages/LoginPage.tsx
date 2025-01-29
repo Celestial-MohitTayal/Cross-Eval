@@ -1,12 +1,9 @@
 import { TextField, Button, Box, Typography, Grid, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { login } from "../redux/userSlice";
-import { useDispatch } from "react-redux";
 import React, { useState } from "react";
 import axios from "axios";
 
 const LoginPage: React.FC = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -28,53 +25,33 @@ const LoginPage: React.FC = () => {
       });
 
       let user = response.data.user;
-      // On success, save the JWT token to localStorage or sessionStorage
+      // On success, save the JWT token to localStorage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
 
-      // Authentication logic - use switch case, constants
-      if (user.role === "Admin") {
-        dispatch(
-          login({
-            id: user.userId,
-            name: user.name,
-            email,
-            type: user.role,
-            isLoggedIn: true,
-          })
-        );
-        navigate("/admin");
-      } else if (user.role === "Teacher") {
-        dispatch(
-          login({
-            id: user.userId,
-            name: user.name,
-            email,
-            type: user.role,
-            isLoggedIn: true,
-          })
-        );
-        navigate("/teacher");
-      } else if (user.role === "Student") {
-        dispatch(
-          login({
-            id: user.userId,
-            name: user.name,
-            email,
-            type: user.role,
-            isLoggedIn: true,
-          })
-        );
-        navigate("/student");
-      } else {
-        alert("Invalid credentials");
+      // Authentication logic
+      switch (user?.role) {
+        case "Admin":
+          navigate("/admin");
+          break;
+        case "Teacher":
+          navigate("/teacher");
+          break;
+        case "Student":
+          navigate("/student");
+          break;
+        default:
+          alert("Invalid credentials");
+          break;
       }
     } catch (err: any) {
       // Handle errors (e.g., invalid credentials or server error)
       if (err.response && err.response.data && err.response.data.message) {
         setError(err.response.data.message);
+        setTimeout(() => setError(""), 5000);
       } else {
         setError("An unexpected error occurred.");
+        setTimeout(() => setError(""), 5000);
       }
     } finally {
       setLoading(false);

@@ -4,6 +4,7 @@ import { protect } from "../middleware/authMiddleware";
 import {
   onboardStudent,
   getAllStudents,
+  getResults
 } from "../controllers/teacherController";
 
 const router = express.Router();
@@ -11,5 +12,5 @@ const router = express.Router();
 // Teacher-specific routes for onboarding students
 router.post("/onboard-student", protect as RequestHandler, onboardStudent); // Onboard a student
 router.get("/get-all-student", protect as RequestHandler, getAllStudents); // Get all students
-
+router.get("/get-result/:quizId", getResults) // Get Students Result
 export default router;
