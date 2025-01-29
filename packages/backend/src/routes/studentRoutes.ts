@@ -12,8 +12,16 @@ import {
 const router = express.Router();
 
 // Student-specific routes
-router.get("/get-avl-quizzes", protect as RequestHandler, getAvailableQuizzes); // Get available quizzes
-router.get("/get-cmp-quizzes", protect as RequestHandler, getCompletedQuizzes); // Get completed quizzes
+router.get(
+  "/get-avl-quizzes/:userId",
+  protect as RequestHandler,
+  getAvailableQuizzes
+); // Get available quizzes
+router.get(
+  "/get-cmp-quizzes/:userId",
+  protect as RequestHandler,
+  getCompletedQuizzes
+); // Get completed quizzes
 router.post(
   "/attempt-quiz/:quizId",
   protect as RequestHandler,

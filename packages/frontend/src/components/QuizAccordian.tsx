@@ -12,18 +12,26 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Quiz } from "../types/Quiz";
 import { get } from "../utils/httpHelper";
+import { useNavigate } from "react-router-dom";
 
 interface QuizAccordionProps {
   quizzes: Quiz[];
   userRole: string; // Either 'Teacher' or 'Student'
+  userId?: string;
 }
 
-const QuizAccordion: React.FC<QuizAccordionProps> = ({ quizzes, userRole }) => {
+const QuizAccordion: React.FC<QuizAccordionProps> = ({
+  quizzes,
+  userRole,
+  userId,
+}) => {
   const [loading, setLoading] = useState(false);
-  const [quizResults, setQuizResults] = useState<any>({}); 
+  const [quizResults, setQuizResults] = useState<any>({});
 
   const token = localStorage.getItem("token");
   const apiUrl = import.meta.env.VITE_API_URL;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userRole === "Teacher") {
@@ -46,7 +54,8 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({ quizzes, userRole }) => {
   const isDueDatePassed = (dueDate: string) => new Date(dueDate) <= new Date();
 
   const handleAttemptQuiz = (quizId: string) => {
-    console.log("Attempting quiz with ID:", quizId);
+    console.log("Attempting quiz with ID:", quizId, userId);
+    navigate(`/quiz/${quizId}/attempt?userId=${userId}`);
   };
 
   const handleCheckResults = (quizId: string) => {

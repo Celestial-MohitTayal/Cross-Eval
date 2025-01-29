@@ -5,8 +5,14 @@ import bcrypt from "bcryptjs";
 
 // Get available quizzes for a student
 export const getAvailableQuizzes = async (req: Request, res: Response) => {
+  const { userId } = req.params;
   try {
-    const quizzes = await Quiz.find({ dueDate: { $gte: new Date() } });
+    const quizzes = await Quiz.find({
+      $and: [
+        { dueDate: { $gte: new Date() } }, // Condition 1: Due date has not passed
+        { attempts: { $not: { $elemMatch: { student: userId } } } }, // Condition 2: Student has not attempted
+      ],
+    });
     res.status(200).json(quizzes);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch quizzes", error: error });
@@ -15,8 +21,14 @@ export const getAvailableQuizzes = async (req: Request, res: Response) => {
 
 //Get Completed Quizzes
 export const getCompletedQuizzes = async (req: Request, res: Response) => {
+  const { userId } = req.params;
   try {
-    const completedQuizzes = await Quiz.find({ dueDate: { $lt: new Date() } });
+    const completedQuizzes = await Quiz.find({
+      $or: [
+        { dueDate: { $lt: new Date() } }, // Condition 1: Due date has passed
+        { attempts: { $elemMatch: { student: userId } } }, // Condition 2: Student has attempted
+      ],
+    });
     res.status(200).json(completedQuizzes);
   } catch (error) {
     res.status(500).json({
@@ -38,22 +50,10 @@ export const attemptQuiz = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Quiz not found" });
     }
 
-    // Check if student has already attempted this quiz
-    const student = await User.findById(userId);
-    if (
-      quiz.attempts.some(
-        (attempt) => attempt.student.toString() === userId.toString()
-      )
-    ) {
-      return res
-        .status(400)
-        .json({ message: "You have already attempted this quiz" });
-    }
-
     // Check answers and calculate score
     let score = 0;
     quiz.questions.forEach((question, index) => {
-      if (question.type === "radio" && answers[index] === question.answer) {
+      if (question.type === "radio" && answers[index] === question.answer[0]) {
         score++;
       } else if (
         question.type === "ms" &&

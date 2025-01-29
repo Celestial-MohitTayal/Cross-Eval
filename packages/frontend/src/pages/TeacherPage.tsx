@@ -52,6 +52,17 @@ const TeacherPage: React.FC = () => {
     gender: string;
     dob: string;
   }) => {
+    // Validate that DOB is not in the future
+    const selectedDate = new Date(data.dob);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Normalize the current date
+
+    if (selectedDate > currentDate) {
+      setError("Date of Birth cannot be in the future");
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+
     try {
       const response = await post(
         `${apiUrl}/teacher/onboard-student`,
@@ -115,7 +126,12 @@ const TeacherPage: React.FC = () => {
               <UserForm onSubmit={handleCreateStudent} />
             </Box>
             <Box margin={4}>
-              <h2>Students List : {students.length}</h2>
+              <h2>Students List : {students.length} </h2>
+              <p>
+                Student password will be first 4 letter of student name +
+                student birth year, Example: Name - Student 1, DOB: 2025-01-01
+                than Password: stud2025
+              </p>
               <UserTable
                 users={students}
                 onToggleAccess={handleToggleAccess}
@@ -127,7 +143,7 @@ const TeacherPage: React.FC = () => {
           <>
             <Box margin={4}>
               <h2>Create New Quiz</h2>
-              <QuizForm fetchQuizzes = {fetchQuizzes}/>
+              <QuizForm fetchQuizzes={fetchQuizzes} />
             </Box>
             <Box margin={4}>
               <h2>Quizzes List: {quizzes.length}</h2>
