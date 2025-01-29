@@ -49,11 +49,10 @@ export const attemptQuiz = async (req: Request, res: Response) => {
     if (!quiz) {
       return res.status(404).json({ message: "Quiz not found" });
     }
-
     // Check answers and calculate score
     let score = 0;
     quiz.questions.forEach((question, index) => {
-      if (question.type === "radio" && answers[index] === question.answer[0]) {
+      if (question.type === "radio" && answers[index.toString()] === question.answer[0]) {
         score++;
       } else if (
         question.type === "ms" &&
@@ -65,7 +64,8 @@ export const attemptQuiz = async (req: Request, res: Response) => {
 
     // Record the student's attempt
     quiz.attempts.push({ student: userId, score, answers });
-    await quiz.save();
+    
+    await quiz.save()
 
     res.status(200).json({ message: "Quiz attempted successfully", score });
   } catch (error) {
@@ -75,13 +75,17 @@ export const attemptQuiz = async (req: Request, res: Response) => {
 
 // Get student's results for a quiz (after due date)
 export const getStudentResults = async (req: Request, res: Response) => {
-  const { quizId } = req.params;
-  const { userId } = req.body;
+  const { quizId, userId } = req.params;
 
   try {
     const quiz = await Quiz.findById(quizId).populate("attempts.student");
     if (!quiz) return res.status(404).json({ message: "Quiz not found" });
 
+    if(quiz.dueDate > new Date()){
+      return res
+        .status(200)
+        .json({ message: "Please wait till due date to see your results" });
+    }
     const studentAttempt = quiz.attempts.find(
       (attempt) => attempt.student.toString() === userId.toString()
     );

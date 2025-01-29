@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ResultModal from "./ResultModal";
 import {
   Accordion,
   AccordionSummary,
@@ -26,40 +27,43 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
   userId,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [quizResults, setQuizResults] = useState<any>({});
+  const [quizResults, setQuizResults] = useState<any>();
+  const [open, setOpen] = useState(false);
 
   const token = localStorage.getItem("token");
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (userRole === "Teacher") {
-      fetchQuizResults();
-    }
-  }, [userRole]);
-
-  const fetchQuizResults = async () => {
-    setLoading(true);
-    try {
-      const response = await get(`${apiUrl}/teacher/get-all-student`, token!);
-      setQuizResults(response);
-    } catch (error) {
-      console.error("Error fetching quiz results", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const isDueDatePassed = (dueDate: string) => new Date(dueDate) <= new Date();
+  const hasStudentAttempted = (
+    attempts: { student: string }[],
+    userId?: string
+  ) => attempts.some((attempt) => attempt.student === userId);
 
   const handleAttemptQuiz = (quizId: string) => {
-    console.log("Attempting quiz with ID:", quizId, userId);
-    navigate(`/quiz/${quizId}/attempt?userId=${userId}`);
+    navigate(`/quiz/${quizId}/attempt`);
   };
 
-  const handleCheckResults = (quizId: string) => {
-    console.log("Viewing results for quiz with ID:", quizId);
+  const handleCheckResults = async (quizId: string) => {
+    if (userRole === "Student") {
+      const data = await get(
+        `${apiUrl}/student/get-result/${quizId}/${userId}`,
+        token!
+      );
+        if(data.message) return alert(data.message);
+        setQuizResults(data);
+        setOpen(true);
+    } else {
+      const data = await get(`${apiUrl}/teacher/get-result/${quizId}`, token!);
+        setQuizResults(data); 
+        setOpen(true);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setQuizResults(null);
   };
 
   const handleEditQuiz = (quizId: string) => {
@@ -99,7 +103,8 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
                   >
                     {userRole === "Student" && (
                       <>
-                        {isDueDatePassed(quiz.dueDate) ? (
+                        {isDueDatePassed(quiz.dueDate) ||
+                        hasStudentAttempted(quiz.attempts, userId) ? (
                           <Button
                             variant="contained"
                             color="primary"
@@ -150,6 +155,10 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
             </AccordionDetails>
           </Accordion>
         ))
+      )}
+      {/* Render Modal */}
+      {quizResults && (
+        <ResultModal open={open} onClose={handleClose} attempts={quizResults} />
       )}
     </Box>
   );

@@ -50,6 +50,7 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
 
     if (!title || !subject || !questions) {
       setError("All fields are required");
+      setTimeout(() => setError(null), 5000);
       return;
     }
     const selectedDate = new Date(dueDate);

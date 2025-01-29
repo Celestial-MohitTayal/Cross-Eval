@@ -13,7 +13,6 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    // console.log(decoded)
     // req.user = decoded; // Attach user information to request
     next();
   } catch (error) {

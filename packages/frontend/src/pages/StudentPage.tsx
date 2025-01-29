@@ -85,7 +85,7 @@ const StudentPage: React.FC = () => {
           <>
             <Box margin={4}>
               <h2>Completed Quizzes : {cmpQuizzes.length}</h2>
-              <QuizAccordion quizzes={cmpQuizzes} userRole={"Student"} />
+              <QuizAccordion quizzes={cmpQuizzes} userRole={"Student"} userId={userId} />
             </Box>
           </>
         )}

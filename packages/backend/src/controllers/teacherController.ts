@@ -64,7 +64,7 @@ export const getResults = async (
   res: Response
 ): Promise<void> => {
   const { quizId } = req.params;
-  console.log(quizId);
+  
   try {
     const quiz = await Quiz.findById(quizId);
 

@@ -28,7 +28,7 @@ router.post(
   attemptQuiz as RequestHandler
 ); // Attempt a quiz
 router.get(
-  "/get-result/:quizId",
+  "/get-result/:quizId/:userId",
   protect as RequestHandler,
   getStudentResults as RequestHandler
 ); // Get student result
