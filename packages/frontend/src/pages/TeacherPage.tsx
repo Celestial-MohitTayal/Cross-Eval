@@ -127,11 +127,7 @@ const TeacherPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Students List : {students.length} </h2>
-              <p>
-                Student password will be first 4 letter of student name +
-                student birth year, Example: Name - Student 1, DOB: 2025-01-01
-                than Password: stud2025
-              </p>
+              <p>Student password will be first 4 letter of student name + student birth year, Example: Name - Student 1, DOB: 2025-01-01 than Password: stud2025</p>
               <UserTable
                 users={students}
                 onToggleAccess={handleToggleAccess}
@@ -147,7 +143,7 @@ const TeacherPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Quizzes List: {quizzes.length}</h2>
-              <QuizAccordion quizzes={quizzes} userRole={"Teacher"} />
+              <QuizAccordion quizzes={quizzes} userRole={"Teacher"} fetchQuizzes={fetchQuizzes}/>
             </Box>
           </>
         )}

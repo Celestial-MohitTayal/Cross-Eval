@@ -8,6 +8,7 @@ export interface IUser extends Document {
   dob: Date;
   isActive: boolean;
   userId: string;
+  passChanged: boolean
 }
 
 const UserSchema: Schema = new Schema(
@@ -24,6 +25,7 @@ const UserSchema: Schema = new Schema(
     dob: { type: Date, required: true },
     isActive: { type: Boolean, default: true },
     userId: { type: String, required: true, unique: true },
+    passChanged: { type: Boolean, default: false }
   },
   {
     timestamps: true,

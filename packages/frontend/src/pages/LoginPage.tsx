@@ -28,6 +28,10 @@ const LoginPage: React.FC = () => {
       // On success, save the JWT token to localStorage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
+      
+      if(!user.passChanged){
+        return navigate("/changePass")
+      }
 
       // Authentication logic
       switch (user?.role) {

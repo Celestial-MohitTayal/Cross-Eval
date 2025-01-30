@@ -12,19 +12,21 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Quiz } from "../types/Quiz";
-import { get } from "../utils/httpHelper";
+import { get, del } from "../utils/httpHelper";
 import { useNavigate } from "react-router-dom";
 
 interface QuizAccordionProps {
   quizzes: Quiz[];
   userRole: string; // Either 'Teacher' or 'Student'
   userId?: string;
+  fetchQuizzes: () => Promise<void>;
 }
 
 const QuizAccordion: React.FC<QuizAccordionProps> = ({
   quizzes,
   userRole,
   userId,
+  fetchQuizzes
 }) => {
   const [loading, setLoading] = useState(false);
   const [quizResults, setQuizResults] = useState<any>();
@@ -70,8 +72,14 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
     console.log("Editing quiz with ID:", quizId);
   };
 
-  const handleDeleteQuiz = (quizId: string) => {
-    console.log("Deleting quiz with ID:", quizId);
+  const handleDeleteQuiz = async (quizId: string) => {
+    try {
+      const response = await del(`${apiUrl}/teacher/delete-quiz/${quizId}`, token!);
+      alert(response.message);
+      fetchQuizzes();
+    } catch (err) {
+      alert("Error deleting user");
+    }
   };
 
   return (

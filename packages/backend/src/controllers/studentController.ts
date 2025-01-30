@@ -64,7 +64,7 @@ export const attemptQuiz = async (req: Request, res: Response) => {
 
     // Record the student's attempt
     quiz.attempts.push({ student: userId, score, answers });
-    
+
     await quiz.save()
 
     res.status(200).json({ message: "Quiz attempted successfully", score });
@@ -105,22 +105,24 @@ export const getStudentResults = async (req: Request, res: Response) => {
 // Change student password (when they log in for the first time)
 export const changePassword = async (req: Request, res: Response) => {
   try {
-    const { userId, newPassword } = req.body;
+    const { userId, oldPassword, newPassword } = req.body;
 
-    // Find the student
-    const student = await User.findById(userId);
-    if (!student || student.role !== "Student") {
-      return res.status(404).json({ message: "Student not found" });
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Hash the new password and save
-    student.password = await bcrypt.hash(newPassword, 10);
-    await student.save();
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
 
-    res.status(200).json({ message: "Password changed successfully" });
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.passChanged = true;
+    await user.save();
+
+    res.status(200).json({ message: "Password changed successfully", user });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to change password", error: error });
+    res.status(500).json({ message: "Failed to change password", error });
   }
 };

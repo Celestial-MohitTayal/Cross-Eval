@@ -78,3 +78,23 @@ export const getResults = async (
     res.status(500).json({ message: "Error fetching results", error: error });
   }
 };
+
+// Delete a quiz
+export const deleteQuiz = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
+  try {
+    const { quizId } = req.params;
+
+    const quiz = await Quiz.findByIdAndDelete(quizId);
+
+    if (!quiz) {
+      return res.status(404).json({ message: "Quiz not found" });
+    }
+
+    res.status(200).json({ message: "Quiz deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting quiz", error: error });
+  }
+};
