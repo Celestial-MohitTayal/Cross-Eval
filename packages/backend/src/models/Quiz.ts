@@ -11,7 +11,7 @@ export interface IQuiz extends Document {
   }[];
   attempts: {
     student: string;
-    answers: string[] | string;
+    answers: { [key: number]: string | string[] };
     score: number;
   }[];
   dueDate: Date;
@@ -23,6 +23,7 @@ const QuizSchema: Schema = new Schema(
     subject: { type: String, required: true },
     questions: [
       {
+        _id: { type: Schema.Types.ObjectId, auto: true },
         question: { type: String, required: true },
         options: [{ type: String, required: true }],
         type: { type: String, enum: ["radio", "ms"], required: true },

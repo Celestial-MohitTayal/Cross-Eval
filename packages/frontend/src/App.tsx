@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import AdminPage from "./pages/AdminPage";
 import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
+import QuizAttempt from "./components/QuizAttempt";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const App: React.FC = () => {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/teacher" element={<TeacherPage />} />
         <Route path="/student" element={<StudentPage />} />
+        <Route path="/quiz/:quizId/attempt" element={<QuizAttempt />} />
       </Routes>
     </Router>
   );

@@ -15,7 +15,7 @@ export const onboardStudent = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Generate unique ID
-    const lastStudent = await User.findOne({ type: "Student" }).sort({
+    const lastStudent = await User.findOne({ role: "Student" }).sort({
       userId: -1,
     });
     const userId = lastStudent
@@ -59,17 +59,20 @@ export const getAllStudents = async (req: Request, res: Response) => {
 };
 
 //Get Student Results
-export const getResults = async (req: Request, res: Response): Promise<void> => {
+export const getResults = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { quizId } = req.params;
-  console.log(quizId);
+  
   try {
-    const quiz = await Quiz.findById(quizId)
-    
+    const quiz = await Quiz.findById(quizId);
+
     if (!quiz) {
-       res.status(404).json({ message: "Quiz not found" });
+      res.status(404).json({ message: "Quiz not found" });
     }
 
-    res.status(200).json(quiz?.attempts); 
+    res.status(200).json(quiz?.attempts);
   } catch (error) {
     console.error("Error fetching results", error);
     res.status(500).json({ message: "Error fetching results", error: error });

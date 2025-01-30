@@ -7,6 +7,7 @@ interface User {
   email: string;
   isActive: boolean;
   type: "Admin" | "Teacher" | "Student";
+  userId: string;
 }
 
 interface AuthState {

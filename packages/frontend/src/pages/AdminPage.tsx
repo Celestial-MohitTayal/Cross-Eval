@@ -50,6 +50,17 @@ const AdminPage: React.FC = () => {
     gender: string;
     dob: string;
   }) => {
+    // Validate that DOB is not in the future
+    const selectedDate = new Date(data.dob);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Normalize the current date
+
+    if (selectedDate > currentDate) {
+      setError("Date of Birth cannot be in the future");
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+
     try {
       const response = await post(
         `${apiUrl}/admin/create-teacher`,
@@ -114,6 +125,7 @@ const AdminPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Teachers List : {teachers.length}</h2>
+              <p>Teachers password will be first 4 letter of teacher name + teacher birth year, Example: Name - Teacher 1, DOB: 2025-01-01 than Password: teac2025</p>
               <UserTable
                 users={teachers}
                 onToggleAccess={handleToggleAccess}
@@ -124,7 +136,7 @@ const AdminPage: React.FC = () => {
         ) : (
           <>
             <Box margin={4}>
-            <h2>Students List: {students.length}</h2>
+              <h2>Students List: {students.length}</h2>
               <UserTable
                 users={students}
                 onToggleAccess={handleToggleAccess}

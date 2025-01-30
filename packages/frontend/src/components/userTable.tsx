@@ -1,5 +1,14 @@
 import React from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+} from "@mui/material";
 import { Lock, LockOpen, Delete } from "@mui/icons-material";
 
 interface UserTableProps {
@@ -8,11 +17,16 @@ interface UserTableProps {
   onDelete: (id: string, role: string) => void;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ users, onToggleAccess, onDelete }) => (
+const UserTable: React.FC<UserTableProps> = ({
+  users,
+  onToggleAccess,
+  onDelete,
+}) => (
   <TableContainer component={Paper}>
     <Table>
       <TableHead>
         <TableRow>
+          <TableCell>Emp-Id</TableCell>
           <TableCell>Name</TableCell>
           <TableCell>Email</TableCell>
           <TableCell>Gender</TableCell>
@@ -24,6 +38,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onToggleAccess, onDelete }
       <TableBody>
         {users.map((user) => (
           <TableRow key={user._id}>
+            <TableCell>{user.userId}</TableCell>
             <TableCell>{user.name}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.gender}</TableCell>

@@ -25,7 +25,7 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
-  
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -50,12 +50,22 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
 
     if (!title || !subject || !questions) {
       setError("All fields are required");
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+    const selectedDate = new Date(dueDate);
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Normalize to prevent time-related issues
+
+    if (selectedDate < currentDate) {
+      setError("Due date cannot be in the past");
+      setTimeout(() => setError(null), 5000);
       return;
     }
     try {
       const response = await post(
         `${apiUrl}/quizzes/create-quiz`,
-        {title, subject, questions, dueDate},
+        { title, subject, questions, dueDate },
         token!
       );
       setSuccess(response.message);

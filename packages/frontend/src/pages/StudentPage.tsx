@@ -3,6 +3,8 @@ import { Tabs, Tab, Box, Grid, TextField, Button } from "@mui/material";
 import Header from "../components/Header";
 import QuizAccordion from "../components/QuizAccordian";
 import { get, post, patch, del } from "../utils/httpHelper";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const StudentPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0); // 0 for Available Quiz, 1 for Completed Quiz
@@ -12,6 +14,7 @@ const StudentPage: React.FC = () => {
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
+  const userId = useSelector((state: RootState) => state?.auth?.user?.userId);
 
   // Fetch available quiz when the component mounts
   useEffect(() => {
@@ -27,7 +30,10 @@ const StudentPage: React.FC = () => {
 
   const fetchAvailableQuizzes = async () => {
     try {
-      const data = await get(`${apiUrl}/student/get-avl-quizzes`, token!);
+      const data = await get(
+        `${apiUrl}/student/get-avl-quizzes/${userId}`,
+        token!
+      );
       setAvlQuizzes(data);
     } catch (err) {
       setError("Error fetching available quizzes");
@@ -36,13 +42,15 @@ const StudentPage: React.FC = () => {
 
   const fetchCompletedQuizzes = async () => {
     try {
-      const data = await get(`${apiUrl}/student/get-cmp-quizzes`, token!);
+      const data = await get(
+        `${apiUrl}/student/get-cmp-quizzes/${userId}`,
+        token!
+      );
       setCmpQuizzes(data);
     } catch (err) {
       setError("Error fetching completed quizzes");
     }
   };
-
 
   return (
     <div style={{ padding: "20px", paddingTop: "60px" }}>
@@ -66,14 +74,18 @@ const StudentPage: React.FC = () => {
                   {error}
                 </div>
               )}
-              <QuizAccordion quizzes={avlQuizzes} userRole={"Student"} />
+              <QuizAccordion
+                quizzes={avlQuizzes}
+                userRole={"Student"}
+                userId={userId}
+              />
             </Box>
           </>
         ) : (
           <>
             <Box margin={4}>
               <h2>Completed Quizzes : {cmpQuizzes.length}</h2>
-              <QuizAccordion quizzes={cmpQuizzes} userRole={"Student"} />
+              <QuizAccordion quizzes={cmpQuizzes} userRole={"Student"} userId={userId} />
             </Box>
           </>
         )}

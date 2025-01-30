@@ -12,8 +12,6 @@ export const createTeacher = async (
   try {
     const { name, email, gender, dob } = req.body;
 
-    console.log("Request Body:", req.body);
-
     if (!name || !email || !gender || !dob) {
       return res.status(400).json({ message: "All fields are required" });
     }
