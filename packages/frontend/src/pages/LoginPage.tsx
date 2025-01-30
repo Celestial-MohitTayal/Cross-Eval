@@ -2,8 +2,11 @@ import { TextField, Button, Box, Typography, Grid, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/authSlice";
 
 const LoginPage: React.FC = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -25,12 +28,14 @@ const LoginPage: React.FC = () => {
       });
 
       let user = response.data.user;
+      let token = response.data.token;
       // On success, save the JWT token to localStorage
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      
-      if(!user.passChanged){
-        return navigate("/changePass")
+      dispatch(login({ user, token }));
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(token));
+
+      if (!user.passChanged) {
+        return navigate("/changePass");
       }
 
       // Authentication logic

@@ -98,3 +98,31 @@ export const deleteQuiz = async (
     res.status(500).json({ message: "Error deleting quiz", error: error });
   }
 };
+
+//update - quiz
+
+export const updateQuiz = async (req: Request, res: Response) => {
+  try {
+    const { quizId } = req.params;
+    const { title, subject, dueDate } = req.body;
+
+    // Validate input
+    if (!quizId) return res.status(400).json({ message: "Quiz ID is required" });
+
+    // Find quiz by ID and update
+    const updatedQuiz = await Quiz.findByIdAndUpdate(
+      quizId,
+      { title, subject, dueDate },
+      { new: true }
+    );
+
+    if (!updatedQuiz) {
+      return res.status(404).json({ message: "Quiz not found" });
+    }
+
+    res.status(200).json({ message: "Quiz updated successfully", updatedQuiz });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

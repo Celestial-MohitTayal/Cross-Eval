@@ -7,7 +7,7 @@ import AdminPage from "./pages/AdminPage";
 import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
 import QuizAttempt from "./components/QuizAttempt";
-import ChangePass from "./pages/changePAss";
+import ChangePass from "./pages/ChangePass";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();

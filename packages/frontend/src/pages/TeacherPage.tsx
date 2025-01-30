@@ -5,7 +5,7 @@ import UserForm from "../components/userForm";
 import UserTable from "../components/userTable";
 import QuizAccordion from "../components/QuizAccordian";
 import QuizForm from "../components/QuizForm";
-import { get, post, patch, del } from "../utils/httpHelper";
+import { get, post, put, del } from "../utils/httpHelper";
 
 const TeacherPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0); // 0 for Teachers, 1 for Students
@@ -79,7 +79,7 @@ const TeacherPage: React.FC = () => {
 
   const handleToggleAccess = async (id: string, role: string) => {
     try {
-      const response = await patch(
+      const response = await put(
         `${apiUrl}/admin/users/${id}/toggle-access`,
         {},
         token!
