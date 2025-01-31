@@ -125,11 +125,16 @@ const AdminPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Teachers List : {teachers.length}</h2>
-              <p>Teachers password will be first 4 letter of teacher name + teacher birth year, Example: Name - Teacher 1, DOB: 2025-01-01 than Password: teac2025</p>
+              <p>
+                Teachers password will be first 4 letter of teacher name +
+                teacher birth year, Example: Name - Teacher 1, DOB: 2025-01-01
+                than Password: teac2025
+              </p>
               <UserTable
                 users={teachers}
                 onToggleAccess={handleToggleAccess}
                 onDelete={handleDeleteUser}
+                fetchUsers={fetchTeachers}
               />
             </Box>
           </>

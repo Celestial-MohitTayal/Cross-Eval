@@ -80,7 +80,7 @@ const TeacherPage: React.FC = () => {
   const handleToggleAccess = async (id: string, role: string) => {
     try {
       const response = await put(
-        `${apiUrl}/admin/users/${id}/toggle-access`,
+        `${apiUrl}/admin/toggle-access/${id}`,
         {},
         token!
       );
@@ -127,11 +127,16 @@ const TeacherPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Students List : {students.length} </h2>
-              <p>Student password will be first 4 letter of student name + student birth year, Example: Name - Student 1, DOB: 2025-01-01 than Password: stud2025</p>
+              <p>
+                Student password will be first 4 letter of student name +
+                student birth year, Example: Name - Student 1, DOB: 2025-01-01
+                than Password: stud2025
+              </p>
               <UserTable
                 users={students}
                 onToggleAccess={handleToggleAccess}
                 onDelete={handleDeleteUser}
+                fetchUsers={fetchStudents}
               />
             </Box>
           </>
@@ -143,7 +148,11 @@ const TeacherPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Quizzes List: {quizzes.length}</h2>
-              <QuizAccordion quizzes={quizzes} userRole={"Teacher"} fetchQuizzes={fetchQuizzes}/>
+              <QuizAccordion
+                quizzes={quizzes}
+                userRole={"Teacher"}
+                fetchQuizzes={fetchQuizzes}
+              />
             </Box>
           </>
         )}

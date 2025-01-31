@@ -122,6 +122,7 @@ export const getAllTeachers = async (req: Request, res: Response) => {
   }
 };
 
+//edit-user
 export const editUser = async (
   req: Request,
   res: Response
@@ -133,20 +134,37 @@ export const editUser = async (
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
-
-    const updatedUser = await Quiz.findByIdAndUpdate(
+    console.log(req.body);
+    const updatedUser = await User.findByIdAndUpdate(
       id,
       { name, email, gender, dob },
       { new: true }
     );
-
+    console.log(updatedUser);
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+
     res.status(200).json({ message: "User updated successfully", updatedUser });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getUser = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching results", error);
+    res.status(500).json({ message: "Error fetching results", error: error });
   }
 };
