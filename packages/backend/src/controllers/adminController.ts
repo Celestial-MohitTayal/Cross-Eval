@@ -120,3 +120,17 @@ export const getAllTeachers = async (req: Request, res: Response) => {
     });
   }
 };
+
+
+export const editUser = async (req: Request, res: Response): Promise<Response | void> => {
+  try {
+    const { id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+  } catch(error){
+
+  }
+}

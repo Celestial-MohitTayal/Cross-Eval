@@ -78,7 +78,7 @@ const AdminPage: React.FC = () => {
   const handleToggleAccess = async (id: string, role: string) => {
     try {
       const response = await put(
-        `${apiUrl}/admin/users/${id}/toggle-access`,
+        `${apiUrl}/admin/toggle-access/${id}`,
         {},
         token!
       );
