@@ -13,7 +13,7 @@ import {
 const router = express.Router();
 
 // Admin-specific routes
-router.get("/get-all-teachers", protect as RequestHandler, getAllTeachers); // Get All Teachers
+router.get("/get-all-teachers", protect as RequestHandler, getAllTeachers as RequestHandler); // Get All Teachers
 router.post(
   "/create-teacher",
   protect as RequestHandler,

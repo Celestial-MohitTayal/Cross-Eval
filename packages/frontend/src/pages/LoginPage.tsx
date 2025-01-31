@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/authSlice";
+import Header from "../components/Header";
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -68,6 +69,8 @@ const LoginPage: React.FC = () => {
   };
 
   return (
+    <>
+    <Header />
     <Grid
       container
       justifyContent="center"
@@ -112,6 +115,7 @@ const LoginPage: React.FC = () => {
         </form>
       </Paper>
     </Grid>
+    </>
   );
 };
 

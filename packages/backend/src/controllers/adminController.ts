@@ -17,6 +17,11 @@ export const createTeacher = async (
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    let verifyEmail = await User.findOne({email: email});
+    if(verifyEmail){
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
     const dobDate = new Date(dob);
 
     // Generate a default password based on the first four letters of the name + birth year

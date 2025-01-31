@@ -8,6 +8,15 @@ export const onboardStudent = async (req: Request, res: Response) => {
   try {
     const { name, email, gender, dob } = req.body;
 
+    if (!name || !email || !gender || !dob) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    let verifyEmail = await User.findOne({ email: email });
+    if (verifyEmail) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
     const dobDate = new Date(dob);
 
     // Generate a default password based on the first four letters of the name + birth year
@@ -64,7 +73,7 @@ export const getResults = async (
   res: Response
 ): Promise<void> => {
   const { quizId } = req.params;
-  
+
   try {
     const quiz = await Quiz.findById(quizId);
 
@@ -107,7 +116,8 @@ export const updateQuiz = async (req: Request, res: Response) => {
     const { title, subject, dueDate } = req.body;
 
     // Validate input
-    if (!quizId) return res.status(400).json({ message: "Quiz ID is required" });
+    if (!quizId)
+      return res.status(400).json({ message: "Quiz ID is required" });
 
     // Find quiz by ID and update
     const updatedQuiz = await Quiz.findByIdAndUpdate(

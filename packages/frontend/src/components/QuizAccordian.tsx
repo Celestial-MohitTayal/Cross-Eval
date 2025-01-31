@@ -22,6 +22,8 @@ interface QuizAccordionProps {
   userRole: string; // Either 'Teacher' or 'Student'
   userId?: string;
   fetchQuizzes?: () => Promise<void>;
+  setSuccess: (value: string | null) => void;
+  setError: (value: string | null) => void;
 }
 
 const QuizAccordion: React.FC<QuizAccordionProps> = ({
@@ -29,6 +31,8 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
   userRole,
   userId,
   fetchQuizzes,
+  setError,
+  setSuccess
 }) => {
   const [loading, setLoading] = useState(false);
   const [quizResults, setQuizResults] = useState<any>();
@@ -48,11 +52,11 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
   ) => attempts.some((attempt) => attempt.student === userId);
 
   const handleAttemptQuiz = (quizId: string) => {
-    navigate(`/quiz/${quizId}/attempt`);
+    navigate(`/quiz-attempt/${quizId}`);
   };
 
   const handleCheckResults = async (quizId: string) => {
-    if (userRole === "Student") {
+    try{if (userRole === "Student") {
       const data = await get(
         `${apiUrl}/student/get-result/${quizId}/${userId}`,
         token!
@@ -63,7 +67,10 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
     } else {
       const data = await get(`${apiUrl}/teacher/get-result/${quizId}`, token!);
       setQuizResults(data);
-      setOpen(true);
+      setOpen(true);}
+    } catch(error: any) {
+      setError(error)
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -83,12 +90,15 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
         `${apiUrl}/teacher/delete-quiz/${quizId}`,
         token!
       );
-      alert(response.message);
       if (fetchQuizzes) {
         fetchQuizzes();
       }
+      setSuccess(response.message);
+      setTimeout(() => setSuccess(null), 5000);
+      
     } catch (err) {
-      alert("Error deleting user");
+      setError("Error deleting user");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -189,6 +199,8 @@ const QuizAccordion: React.FC<QuizAccordionProps> = ({
         onClose={() => setEditModalOpen(false)}
         quizId={selectedQuizId}
         fetchQuizzes={fetchQuizzes}
+        setError={setError}
+        setSuccess={setSuccess}
       />
     </>
   );

@@ -7,6 +7,8 @@ interface EditUserzModalProps {
   onClose: () => void;
   id: string | null;
   fetchUsers?: () => Promise<void>;
+  setSuccess: (value: string | null) => void;
+  setError: (value: string | null) => void;
 }
 
 const EditUserModal: React.FC<EditUserzModalProps> = ({
@@ -14,6 +16,8 @@ const EditUserModal: React.FC<EditUserzModalProps> = ({
   onClose,
   id,
   fetchUsers,
+  setError,
+  setSuccess
 }) => {
   const [userData, setUserData] = useState({
     name: "",
@@ -46,13 +50,15 @@ const EditUserModal: React.FC<EditUserzModalProps> = ({
   const handleSubmit = async () => {
     try {
       await put(`${apiUrl}/admin/edit-user/${id}`, userData, token!);
-      alert("User updated successfully!");
       if (fetchUsers) {
         fetchUsers();
       }
+      setSuccess("User updated successfully!");
+      setTimeout(() => setSuccess(null), 5000);
       onClose();
     } catch (err) {
-      alert("Error updating user");
+      setError("Error updating user");
+      setTimeout(() => setError(null), 5000);
     }
   };
 

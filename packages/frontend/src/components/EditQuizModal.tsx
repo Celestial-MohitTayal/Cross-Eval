@@ -7,6 +7,8 @@ interface EditQuizModalProps {
   onClose: () => void;
   quizId: string | null;
   fetchQuizzes?: () => Promise<void>;
+  setSuccess: (value: string | null) => void;
+  setError: (value: string | null) => void;
 }
 
 const EditQuizModal: React.FC<EditQuizModalProps> = ({
@@ -14,6 +16,8 @@ const EditQuizModal: React.FC<EditQuizModalProps> = ({
   onClose,
   quizId,
   fetchQuizzes,
+  setError,
+  setSuccess
 }) => {
   const [quizData, setQuizData] = useState({
     title: "",
@@ -44,13 +48,16 @@ const EditQuizModal: React.FC<EditQuizModalProps> = ({
   const handleSubmit = async () => {
     try {
       await put(`${apiUrl}/teacher/update-quiz/${quizId}`, quizData, token!);
-      alert("Quiz updated successfully!");
       if (fetchQuizzes) {
         fetchQuizzes();
       }
+      setSuccess("Quiz updated successfully!");
+      setTimeout(() => setSuccess(null), 5000);
+      
       onClose();
     } catch (err) {
-      alert("Error updating quiz");
+      setError("Error updating quiz");
+      setTimeout(() => setError(null), 5000);
     }
   };
 

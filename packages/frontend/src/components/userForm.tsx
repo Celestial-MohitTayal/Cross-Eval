@@ -16,7 +16,7 @@ interface UserFormProps {
     email: string;
     gender: string;
     dob: string;
-  }) => void;
+  }) => Promise<void>;
   initialData?: { name: string; email: string; gender: string; dob: string };
 }
 
@@ -26,6 +26,8 @@ const UserForm: React.FC<UserFormProps> = ({
 }) => {
   const [formData, setFormData] = useState(initialData);
   const [error, setError] = useState<string>("");
+
+  const today = new Date().toISOString().split("T")[0];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -96,15 +98,20 @@ const UserForm: React.FC<UserFormProps> = ({
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Date of Birth"
               name="dob"
-              fullWidth
               type="date"
+              fullWidth
               value={formData.dob}
               onChange={handleChange}
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              inputProps={{
+                max: today, // Disable future dates (select only past dates)
+              }}
             />
           </Grid>
           <Grid item xs={12}>

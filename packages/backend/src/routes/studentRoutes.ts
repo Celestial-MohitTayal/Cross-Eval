@@ -15,12 +15,12 @@ const router = express.Router();
 router.get(
   "/get-avl-quizzes/:userId",
   protect as RequestHandler,
-  getAvailableQuizzes
+  getAvailableQuizzes as RequestHandler
 ); // Get available quizzes
 router.get(
   "/get-cmp-quizzes/:userId",
   protect as RequestHandler,
-  getCompletedQuizzes
+  getCompletedQuizzes as RequestHandler
 ); // Get completed quizzes
 router.post(
   "/attempt-quiz/:quizId",

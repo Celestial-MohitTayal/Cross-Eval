@@ -17,6 +17,8 @@ interface UserTableProps {
   onToggleAccess: (id: string, role: string) => void;
   onDelete: (id: string, role: string) => void;
   fetchUsers?: () => Promise<void>;
+  setSuccess?: (value: string | null) => void;
+  setError?: (value: string | null) => void;
 }
 
 const UserTable: React.FC<UserTableProps> = ({
@@ -24,6 +26,8 @@ const UserTable: React.FC<UserTableProps> = ({
   onToggleAccess,
   onDelete,
   fetchUsers,
+  setSuccess,
+  setError
 }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState("");
@@ -63,9 +67,10 @@ const UserTable: React.FC<UserTableProps> = ({
                   >
                     {user.isActive ? <LockOpen /> : <Lock />}
                   </IconButton>
+                  {fetchUsers &&
                   <IconButton onClick={() => handleEditUser(user._id)}>
                     <Edit />
-                  </IconButton>
+                  </IconButton>}
                   <IconButton onClick={() => onDelete(user._id, user.role)}>
                     <Delete />
                   </IconButton>
@@ -75,12 +80,15 @@ const UserTable: React.FC<UserTableProps> = ({
           </TableBody>
         </Table>
       </TableContainer>
+      {setSuccess && setError && 
       <EditUserModal
         open={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         id={selectedUserId}
         fetchUsers={fetchUsers}
-      />
+        setError={setError}
+        setSuccess={setSuccess}
+      />}
     </>
   );
 };

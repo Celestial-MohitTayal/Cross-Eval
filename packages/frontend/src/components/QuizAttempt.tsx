@@ -56,7 +56,7 @@ const QuizAttempt: React.FC = () => {
     const fetchQuiz = async () => {
       try {
         const data = await get(`${apiUrl}/quizzes/get-all-quiz`, token!);
-        const selectedQuiz = data.find((quiz: any) => quiz._id === quizId);
+        const selectedQuiz = data.find((quiz: Quiz) => quiz._id === quizId);
         if (selectedQuiz) {
           setQuiz(selectedQuiz);
           setTimeLeft(selectedQuiz.questions.length * 30);
@@ -107,7 +107,8 @@ const QuizAttempt: React.FC = () => {
         token!
       );
       navigate("/student");
-    } catch (error) {
+    } catch (error: any) {
+      setError(error);
       console.error("Error submitting quiz:", error);
     }
   };

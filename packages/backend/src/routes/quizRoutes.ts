@@ -11,7 +11,7 @@ router.post(
   protect as RequestHandler,
   createQuiz as RequestHandler
 ); // Create a quiz
-router.get("/get-all-quiz", protect as RequestHandler, getQuizzes); // Get all quizzes
-router.get("/get-quiz/:quizId", protect as RequestHandler, getQuiz); // Get quiz
+router.get("/get-all-quiz", protect as RequestHandler, getQuizzes as RequestHandler); // Get all quizzes
+router.get("/get-quiz/:quizId", protect as RequestHandler, getQuiz as RequestHandler); // Get quiz
 
 export default router;
