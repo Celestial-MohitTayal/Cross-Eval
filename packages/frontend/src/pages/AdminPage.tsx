@@ -3,7 +3,7 @@ import { Tabs, Tab, Box, Grid, TextField, Button } from "@mui/material";
 import Header from "../components/Header";
 import UserForm from "../components/userForm";
 import UserTable from "../components/userTable";
-import { get, post, patch, del } from "../utils/httpHelper";
+import { get, post, put, del } from "../utils/httpHelper";
 
 const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0); // 0 for Teachers, 1 for Students
@@ -77,7 +77,7 @@ const AdminPage: React.FC = () => {
 
   const handleToggleAccess = async (id: string, role: string) => {
     try {
-      const response = await patch(
+      const response = await put(
         `${apiUrl}/admin/users/${id}/toggle-access`,
         {},
         token!

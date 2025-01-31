@@ -5,7 +5,7 @@ import UserForm from "../components/userForm";
 import UserTable from "../components/userTable";
 import QuizAccordion from "../components/QuizAccordian";
 import QuizForm from "../components/QuizForm";
-import { get, post, patch, del } from "../utils/httpHelper";
+import { get, post, put, del } from "../utils/httpHelper";
 
 const TeacherPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0); // 0 for Teachers, 1 for Students
@@ -79,7 +79,7 @@ const TeacherPage: React.FC = () => {
 
   const handleToggleAccess = async (id: string, role: string) => {
     try {
-      const response = await patch(
+      const response = await put(
         `${apiUrl}/admin/users/${id}/toggle-access`,
         {},
         token!
@@ -127,11 +127,7 @@ const TeacherPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Students List : {students.length} </h2>
-              <p>
-                Student password will be first 4 letter of student name +
-                student birth year, Example: Name - Student 1, DOB: 2025-01-01
-                than Password: stud2025
-              </p>
+              <p>Student password will be first 4 letter of student name + student birth year, Example: Name - Student 1, DOB: 2025-01-01 than Password: stud2025</p>
               <UserTable
                 users={students}
                 onToggleAccess={handleToggleAccess}
@@ -147,7 +143,7 @@ const TeacherPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Quizzes List: {quizzes.length}</h2>
-              <QuizAccordion quizzes={quizzes} userRole={"Teacher"} />
+              <QuizAccordion quizzes={quizzes} userRole={"Teacher"} fetchQuizzes={fetchQuizzes}/>
             </Box>
           </>
         )}

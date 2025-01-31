@@ -28,9 +28,9 @@ const post = async (url: string, data: any, token: string) => {
   }
 };
 
-const patch = async (url: string, data: any, token: string) => {
+const put = async (url: string, data: any, token: string) => {
   try {
-    const response = await axios.patch(url, data, {
+    const response = await axios.put(url, data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -54,4 +54,4 @@ const del = async (url: string, token: string) => {
   }
 };
 
-export { get, post, patch, del };
+export { get, post, put, del };

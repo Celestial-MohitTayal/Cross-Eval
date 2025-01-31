@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Box, Grid, TextField, Button } from "@mui/material";
 import Header from "../components/Header";
 import QuizAccordion from "../components/QuizAccordian";
-import { get, post, patch, del } from "../utils/httpHelper";
+import { get } from "../utils/httpHelper";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 
