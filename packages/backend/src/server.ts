@@ -8,6 +8,7 @@ import connectDB from './config/db';
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import { notFoundHandler } from "./middleware/notFound";
 
 dotenv.config();
 
@@ -28,6 +29,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/teacher", teacherRoutes);  
 app.use("/api/quizzes", quizRoutes);  
 app.use("/api/student", studentRoutes);  
+
+app.use(notFoundHandler);
 
 
 app.get("/", (req, res) => {

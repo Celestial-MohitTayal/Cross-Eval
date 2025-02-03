@@ -10,6 +10,7 @@ import TeacherPage from "./pages/TeacherPage";
 import StudentPage from "./pages/StudentPage";
 import QuizAttempt from "./components/QuizAttempt";
 import ChangePass from "./pages/ChangePass";
+import PageNotFound from "./pages/PageNotFound";
 
 const App: React.FC = () => {
 
@@ -24,6 +25,7 @@ const App: React.FC = () => {
         <Route path="/student" element={<StudentPage />} />
         <Route path="/quiz-attempt/:quizId" element={<QuizAttempt />} />
         <Route path="/changePass" element={<ChangePass />} />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );

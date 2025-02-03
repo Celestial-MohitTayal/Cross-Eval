@@ -3,7 +3,6 @@ import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
-import { set } from "react-hook-form";
 
 const Header: React.FC = () => {
   const [loading, setLoading] = useState(false)

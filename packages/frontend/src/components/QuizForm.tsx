@@ -47,6 +47,7 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
         }
       };
       reader.readAsText(file);
+      event.target.value = "";
     }
   };
 
