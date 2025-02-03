@@ -1,0 +1,10 @@
+PORT = 5003
+
+JWT_SECRET = <Any-Secret-Key-You-Want-To-Have>
+
+MONGO_URI = mongodb+srv://<mongodb-username>:<mongodb-password>@<cluster-name>.dhspw.mongodb.net/<db-name>?retryWrites=true&w=majority&appName=<cluster-name>
+
+VITE_API_URL = http://localhost:5003/api
+
+
+To Create Admin Profile -> You need to create it manually using postman or similar platform.
