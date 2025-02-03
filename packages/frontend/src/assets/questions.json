@@ -10,5 +10,11 @@
     "options": ["A. Python", "B. HTML", "C. CSS", "D. JavaScript"],
     "type": "ms",
     "answer": ["A. Python", "D. JavaScript"]
+  },
+  {
+    "question": "What is the capital of india?",
+    "options": ["A. Mumbai", "B. Madrid", "C. Paris", "D. Delhi"],
+    "type": "radio",
+    "answer": ["D. Delhi"]
   }
 ]

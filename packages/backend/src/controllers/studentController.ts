@@ -52,20 +52,27 @@ export const attemptQuiz = async (req: Request, res: Response) => {
     // Check answers and calculate score
     let score = 0;
     quiz.questions.forEach((question, index) => {
-      if (question.type === "radio" && answers[index.toString()] === question.answer[0]) {
-        score++;
-      } else if (
-        question.type === "ms" &&
-        JSON.stringify(answers[index]) === JSON.stringify(question.answer)
+      if (
+        question.type === "radio" &&
+        answers[index.toString()] === question.answer[0]
       ) {
         score++;
+      } else if (
+        question.type === "ms"
+        //  && JSON.stringify(answers[index]) === JSON.stringify(question.answer)
+      ) {
+        answers[index].map((ans: any) => {
+          if (question.answer.includes(ans)) {
+            score += score + 1 / question.answer.length;
+          }
+        });
       }
     });
 
     // Record the student's attempt
     quiz.attempts.push({ student: userId, score, answers });
 
-    await quiz.save()
+    await quiz.save();
 
     res.status(200).json({ message: "Quiz attempted successfully", score });
   } catch (error) {
@@ -81,7 +88,7 @@ export const getStudentResults = async (req: Request, res: Response) => {
     const quiz = await Quiz.findById(quizId).populate("attempts.student");
     if (!quiz) return res.status(404).json({ message: "Quiz not found" });
 
-    if(quiz.dueDate > new Date()){
+    if (quiz.dueDate > new Date()) {
       return res
         .status(200)
         .json({ message: "Please wait till due date to see your results" });
@@ -105,16 +112,11 @@ export const getStudentResults = async (req: Request, res: Response) => {
 // Change student password (when they log in for the first time)
 export const changePassword = async (req: Request, res: Response) => {
   try {
-    const { userId, oldPassword, newPassword } = req.body;
+    const { userId, newPassword } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
-    }
-
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Old password is incorrect" });
     }
 
     user.password = await bcrypt.hash(newPassword, 10);

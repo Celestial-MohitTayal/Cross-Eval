@@ -11,6 +11,7 @@ const StudentPage: React.FC = () => {
   const [avlQuizzes, setAvlQuizzes] = useState<any[]>([]);
   const [cmpQuizzes, setCmpQuizzes] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
@@ -37,6 +38,7 @@ const StudentPage: React.FC = () => {
       setAvlQuizzes(data);
     } catch (err) {
       setError("Error fetching available quizzes");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -49,6 +51,7 @@ const StudentPage: React.FC = () => {
       setCmpQuizzes(data);
     } catch (err) {
       setError("Error fetching completed quizzes");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -64,6 +67,13 @@ const StudentPage: React.FC = () => {
         <Tab label="Completed Quizzes" />
       </Tabs>
 
+      {error && (
+        <div style={{ color: "red", margin: "10px", textAlign: "center" }}>{error}</div>
+      )}
+      {success && (
+        <div style={{ color: "green", margin: "10px", textAlign: "center" }}>{success}</div>
+      )}
+
       <Box>
         {activeTab === 0 ? (
           <>
@@ -78,6 +88,8 @@ const StudentPage: React.FC = () => {
                 quizzes={avlQuizzes}
                 userRole={"Student"}
                 userId={userId}
+                setError={setError}
+                setSuccess={setSuccess}
               />
             </Box>
           </>
@@ -85,7 +97,13 @@ const StudentPage: React.FC = () => {
           <>
             <Box margin={4}>
               <h2>Completed Quizzes : {cmpQuizzes.length}</h2>
-              <QuizAccordion quizzes={cmpQuizzes} userRole={"Student"} userId={userId} />
+              <QuizAccordion
+                quizzes={cmpQuizzes}
+                userRole={"Student"}
+                userId={userId}
+                setError={setError}
+                setSuccess={setSuccess}
+              />
             </Box>
           </>
         )}

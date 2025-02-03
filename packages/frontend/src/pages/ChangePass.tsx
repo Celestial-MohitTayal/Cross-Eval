@@ -5,11 +5,12 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/authSlice";
 import { post } from "../utils/httpHelper";
+import Header from "../components/Header";
 
 const ChangePass: React.FC = () => {
   const navigate = useNavigate();
-  const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -43,13 +44,18 @@ const ChangePass: React.FC = () => {
       return setTimeout(() => setError(""), 5000);
     }
 
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return setTimeout(() => setError(""), 5000);
+    }
+
     try {
       const response = await post(
         apiUrl + "/student/change-password",
         {
           userId,
           newPassword,
-          oldPassword,
         },
         token!
       );
@@ -121,22 +127,22 @@ const ChangePass: React.FC = () => {
           <form onSubmit={ChangePass}>
             <Box mb={2}>
               <TextField
-                label="Old Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-              />
-            </Box>
-            <Box mb={2}>
-              <TextField
                 label="New Password"
                 type="password"
                 variant="outlined"
                 fullWidth
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </Box>
+            <Box mb={2}>
+              <TextField
+                label="Confirm Password"
+                type="password"
+                variant="outlined"
+                fullWidth
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </Box>
             {error && (

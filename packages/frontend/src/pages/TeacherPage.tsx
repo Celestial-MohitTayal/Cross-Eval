@@ -12,6 +12,7 @@ const TeacherPage: React.FC = () => {
   const [quizzes, setQuizzes] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
@@ -34,6 +35,7 @@ const TeacherPage: React.FC = () => {
       setQuizzes(data);
     } catch (err) {
       setError("Error fetching quizzes");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -43,6 +45,7 @@ const TeacherPage: React.FC = () => {
       setStudents(data);
     } catch (err) {
       setError("Error fetching students");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -69,8 +72,9 @@ const TeacherPage: React.FC = () => {
         data,
         token!
       );
-      alert(response.message);
       fetchStudents();
+      setSuccess(response.message);
+      setTimeout(() => setSuccess(null), 5000);
     } catch (err: any) {
       setError(err?.message || "Error creating teacher");
       setTimeout(() => setError(null), 5000);
@@ -80,24 +84,28 @@ const TeacherPage: React.FC = () => {
   const handleToggleAccess = async (id: string, role: string) => {
     try {
       const response = await put(
-        `${apiUrl}/admin/users/${id}/toggle-access`,
+        `${apiUrl}/admin/toggle-access/${id}`,
         {},
         token!
       );
-      alert(response.message);
       fetchStudents();
+      setSuccess(response.message);
+      setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
-      alert("Error toggling access");
+      setError("Error toggling access");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
   const handleDeleteUser = async (id: string, role: string) => {
     try {
       const response = await del(`${apiUrl}/admin/delete-users/${id}`, token!);
-      alert(response.message);
       fetchStudents();
+      setSuccess(response.message);
+      setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
-      alert("Error deleting user");
+      setError("Error deleting user");
+      setTimeout(() => setError(null), 5000);
     }
   };
 
@@ -113,25 +121,38 @@ const TeacherPage: React.FC = () => {
         <Tab label="Quizzes" />
       </Tabs>
 
+      {error && (
+        <div style={{ color: "red", margin: "10px", textAlign: "center" }}>
+          {error}
+        </div>
+      )}
+      {success && (
+        <div style={{ color: "green", margin: "10px", textAlign: "center" }}>
+          {success}
+        </div>
+      )}
+
       <Box>
         {activeTab === 0 ? (
           <>
             <Box margin={4}>
               <h2>Create Student</h2>
-              {error && (
-                <div style={{ color: "red", marginBottom: "10px" }}>
-                  {error}
-                </div>
-              )}
               <UserForm onSubmit={handleCreateStudent} />
             </Box>
             <Box margin={4}>
               <h2>Students List : {students.length} </h2>
-              <p>Student password will be first 4 letter of student name + student birth year, Example: Name - Student 1, DOB: 2025-01-01 than Password: stud2025</p>
+              <p>
+                Student password will be first 4 letter of student name +
+                student birth year, Example: Name - Student 1, DOB: 2025-01-01
+                than Password: stud2025
+              </p>
               <UserTable
                 users={students}
                 onToggleAccess={handleToggleAccess}
                 onDelete={handleDeleteUser}
+                fetchUsers={fetchStudents}
+                setError={setError}
+                setSuccess={setSuccess}
               />
             </Box>
           </>
@@ -143,7 +164,13 @@ const TeacherPage: React.FC = () => {
             </Box>
             <Box margin={4}>
               <h2>Quizzes List: {quizzes.length}</h2>
-              <QuizAccordion quizzes={quizzes} userRole={"Teacher"} fetchQuizzes={fetchQuizzes}/>
+              <QuizAccordion
+                quizzes={quizzes}
+                userRole={"Teacher"}
+                fetchQuizzes={fetchQuizzes}
+                setError={setError}
+                setSuccess={setSuccess}
+              />
             </Box>
           </>
         )}

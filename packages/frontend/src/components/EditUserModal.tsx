@@ -2,61 +2,62 @@ import React, { useState, useEffect } from "react";
 import { Modal, Box, TextField, Button, Typography } from "@mui/material";
 import { put, get } from "../utils/httpHelper";
 
-interface EditQuizModalProps {
+interface EditUserzModalProps {
   open: boolean;
   onClose: () => void;
-  quizId: string | null;
-  fetchQuizzes?: () => Promise<void>;
+  id: string | null;
+  fetchUsers?: () => Promise<void>;
   setSuccess: (value: string | null) => void;
   setError: (value: string | null) => void;
 }
 
-const EditQuizModal: React.FC<EditQuizModalProps> = ({
+const EditUserModal: React.FC<EditUserzModalProps> = ({
   open,
   onClose,
-  quizId,
-  fetchQuizzes,
+  id,
+  fetchUsers,
   setError,
   setSuccess
 }) => {
-  const [quizData, setQuizData] = useState({
-    title: "",
-    subject: "",
-    dueDate: "",
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    gender: "",
+    dob: "",
   });
   const token = localStorage.getItem("token");
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    if (quizId) {
-      get(`${apiUrl}/quizzes/get-quiz/${quizId}`, token!)
+    if (id) {
+      get(`${apiUrl}/admin/get-user/${id}`, token!)
         .then((data) =>
-          setQuizData({
-            title: data.title,
-            subject: data.subject,
-            dueDate: data.dueDate.split("T")[0],
+          setUserData({
+            name: data.name,
+            email: data.email,
+            gender: data.gender,
+            dob: data.dob.split("T")[0],
           })
         )
-        .catch((err) => console.error("Error fetching quiz:", err));
+        .catch((err) => console.error("Error fetching user:", err));
     }
-  }, [quizId]);
+  }, [id]);
 
   const handleChange = (e: any) => {
-    setQuizData({ ...quizData, [e.target.name]: e.target.value });
+    setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
     try {
-      await put(`${apiUrl}/teacher/update-quiz/${quizId}`, quizData, token!);
-      if (fetchQuizzes) {
-        fetchQuizzes();
+      await put(`${apiUrl}/admin/edit-user/${id}`, userData, token!);
+      if (fetchUsers) {
+        fetchUsers();
       }
-      setSuccess("Quiz updated successfully!");
+      setSuccess("User updated successfully!");
       setTimeout(() => setSuccess(null), 5000);
-      
       onClose();
     } catch (err) {
-      setError("Error updating quiz");
+      setError("Error updating user");
       setTimeout(() => setError(null), 5000);
     }
   };
@@ -75,26 +76,34 @@ const EditQuizModal: React.FC<EditQuizModalProps> = ({
       >
         <Typography variant="h6">Edit Quiz</Typography>
         <TextField
-          label="Title"
-          name="title"
-          value={quizData.title}
+          label="Name"
+          name="name"
+          value={userData.name}
           onChange={handleChange}
           fullWidth
           margin="normal"
         />
         <TextField
-          label="Subject"
-          name="subject"
-          value={quizData.subject}
+          label="Email"
+          name="email"
+          value={userData.email}
           onChange={handleChange}
           fullWidth
           margin="normal"
         />
         <TextField
-          label="Due Date"
+          label="Gender"
+          name="gender"
+          value={userData.gender}
+          onChange={handleChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Dob"
           type="date"
-          name="dueDate"
-          value={quizData.dueDate}
+          name="dob"
+          value={userData.dob}
           onChange={handleChange}
           fullWidth
           margin="normal"
@@ -113,4 +122,4 @@ const EditQuizModal: React.FC<EditQuizModalProps> = ({
   );
 };
 
-export default EditQuizModal;
+export default EditUserModal;

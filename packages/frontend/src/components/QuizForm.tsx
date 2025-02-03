@@ -8,6 +8,7 @@ import {
   MenuItem,
   FormControl,
   Select,
+  Typography,
 } from "@mui/material";
 import { post } from "../utils/httpHelper";
 
@@ -22,6 +23,9 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
   const [dueDate, setDueDate] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string>("");
+
+  const today = new Date().toISOString().split("T")[0];
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("token");
@@ -30,17 +34,18 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-
+      setFileName(file.name);
       reader.onload = (e) => {
         try {
           const jsonData = JSON.parse(e.target?.result as string);
           setQuizQuestions(jsonData);
-          alert("File successfully parsed!");
+          setSuccess("File successfully uploaded!");
+          setTimeout(() => setSuccess(null), 5000);
         } catch (error) {
-          alert("Invalid JSON file. Please upload a valid file.");
+          setError("Invalid JSON file. Please upload a valid file.");
+          setTimeout(() => setError(null), 5000);
         }
       };
-
       reader.readAsText(file);
     }
   };
@@ -73,6 +78,7 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
       setQuizSubject("");
       setDueDate("");
       setQuizQuestions(null);
+      setFileName("");
       setTimeout(() => setSuccess(null), 3000);
       fetchQuizzes();
     } catch (err: any) {
@@ -126,9 +132,24 @@ const QuizForm: React.FC<QuizComponentProps> = ({ fetchQuizzes }) => {
               InputLabelProps={{
                 shrink: true,
               }}
+              inputProps={{
+                min: today, // Disable past dates (select only future dates)
+              }}
             />
           </Grid>
           <Grid item xs={12}>
+            {fileName && (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  marginBottom: 2,
+                }}
+              >
+                <Typography variant="body2" color="textSecondary">
+                  Selected File: {fileName}
+                </Typography>
+              </Box>
+            )}
             <Button variant="contained" component="label" fullWidth>
               Upload Questions (JSON)
               <input

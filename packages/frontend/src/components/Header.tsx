@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/authSlice";
+import { set } from "react-hook-form";
 
 const Header: React.FC = () => {
+  const [loading, setLoading] = useState(false)
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -15,6 +17,12 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     if (token && user) {
+      setLoading(true);
+    }
+  },[token, user])
+
+  useEffect(() => {
+    if(loading){
       switch (user?.role) {
         case "Admin":
           navigate("/admin");
@@ -30,9 +38,10 @@ const Header: React.FC = () => {
           break;
       }
     } else {
-      navigate("/");
+      navigate("/")
     }
-  }, [token, user, navigate]);
+  }, [loading, navigate]);
+  
 
   const handleLogout = () => {
     dispatch(logout());
@@ -43,11 +52,11 @@ const Header: React.FC = () => {
     <AppBar position="absolute" color="primary">
       <Toolbar>
         <Typography variant="h6" style={{ flexGrow: 1 }}>
-          {(user.role).toUpperCase()} DASHBOARD
+          {user ? `${(user.role).toUpperCase()} DASHBOARD` : `EDUCATION MANAGEMENT SYSTEM` } 
         </Typography>
-        <Button color="inherit" onClick={handleLogout}>
+        {token && <Button color="inherit" onClick={handleLogout}>
           Logout
-        </Button>
+        </Button>}
       </Toolbar>
     </AppBar>
   );
